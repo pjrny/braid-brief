@@ -1,0 +1,25 @@
+name = "braid-brief"
+main = "src/worker.ts"
+compatibility_date = "2026-09-01"
+workers_dev = true
+
+# Pages + Worker: static morning-brief UI in ./public, API at /api/brief
+[assets]
+directory = "./public"
+binding = "ASSETS"
+not_found_handling = "single-page-application"
+run_worker_first = ["/api/*"]
+
+# Optional durable archive of each day's fingerprint. Create with:
+#   npx wrangler kv namespace create ARCHIVE
+# then paste the id below and uncomment.
+# [[kv_namespaces]]
+# binding = "ARCHIVE"
+# id = "replace-me"
+
+[triggers]
+# 11:00 UTC ≈ morning in the Americas
+crons = ["0 11 * * *"]
+
+[observability]
+enabled = true
