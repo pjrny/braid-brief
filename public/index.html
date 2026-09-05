@@ -1,0 +1,244 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>Braid Brief</title>
+  <meta name="description" content="Daily morning brief: four Productivity Game 1-pagers and the Dimensional Braid Engine research frontier." />
+  <link rel="icon" type="image/svg+xml" href="./favicon.svg" />
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Fraunces:opsz,wght@9..144,500;9..144,600&family=IBM+Plex+Mono:wght@400;500&family=IBM+Plex+Sans:wght@400;500;600&display=swap" rel="stylesheet" />
+  <style>
+    :root {
+      --bg: #efe9dc;
+      --surface: #f7f3ea;
+      --ink: #171410;
+      --muted: #6d675c;
+      --accent: #2a4548;
+      --accent-fg: #f4efe4;
+      --soft: #d7e3e2;
+      --border: #d5cdb8;
+      --mast: #141210;
+      --ok: #2f5d46;
+      --danger: #8b2e2e;
+      --warn: #8a4b2a;
+    }
+    * { box-sizing: border-box; }
+    html, body { margin: 0; background: var(--bg); color: var(--ink); font-family: "IBM Plex Sans", system-ui, sans-serif; }
+    h1, h2, h3 { font-family: Fraunces, Georgia, serif; letter-spacing: -0.03em; font-weight: 500; }
+    a { color: var(--accent); }
+    header { background: var(--mast); color: var(--accent-fg); padding: 28px 20px 22px; }
+    .wrap { max-width: 960px; margin: 0 auto; }
+    .kicker { font-family: "IBM Plex Mono", monospace; font-size: 11px; letter-spacing: 0.22em; text-transform: uppercase; opacity: 0.75; }
+    h1 { font-size: clamp(2rem, 5vw, 3.2rem); margin: 8px 0 0; }
+    .thesis { max-width: 40rem; opacity: 0.8; line-height: 1.5; }
+    .date-row { display: flex; flex-wrap: wrap; gap: 8px; align-items: center; margin-top: 20px; }
+    button, .tab {
+      font: inherit; cursor: pointer; border: 0; height: 44px; padding: 0 14px;
+      border-radius: 8px; background: var(--soft); color: var(--accent);
+    }
+    button.ghost { background: transparent; color: var(--accent-fg); }
+    button.ghost:hover { background: rgba(255,255,255,0.08); }
+    .tabs { display: flex; gap: 6px; margin-top: 22px; overflow-x: auto; }
+    .tab { background: transparent; color: rgba(244,239,228,0.8); white-space: nowrap; }
+    .tab.on { background: var(--surface); color: var(--ink); }
+    main { padding: 28px 20px 64px; }
+    article, .card {
+      background: var(--surface); border: 1px solid var(--border); border-radius: 28px;
+      padding: 20px; margin: 0 0 16px; box-shadow: 0 10px 28px -18px rgba(23,20,16,0.35);
+    }
+    .meta { font-family: "IBM Plex Mono", monospace; font-size: 11px; letter-spacing: 0.16em; text-transform: uppercase; color: var(--muted); }
+    blockquote { margin: 12px 0; padding-left: 12px; border-left: 2px solid var(--accent); font-family: Fraunces, serif; font-style: italic; }
+    ul.rules { list-style: none; padding: 0; }
+    ul.rules li { background: #e4dccb; border-radius: 12px; padding: 8px 12px; margin: 8px 0; }
+    .chip { font-family: "IBM Plex Mono", monospace; font-size: 11px; letter-spacing: 0.12em; text-transform: uppercase; border-radius: 999px; padding: 4px 10px; }
+    .support { background: var(--soft); color: var(--accent); }
+    .challenge { background: #e4dccb; color: var(--danger); }
+    .qualify { background: #e4dccb; color: var(--warn); }
+    .grid { display: grid; gap: 12px; }
+    @media (min-width: 720px) { .grid.two { grid-template-columns: 1fr 1fr; } }
+    .choice { display: block; width: 100%; text-align: left; background: #fffdf8; border: 1px solid var(--border); color: var(--ink); margin: 8px 0; height: auto; padding: 12px 14px; line-height: 1.45; }
+    .choice:hover { border-color: var(--accent); background: var(--soft); }
+    footer { text-align: center; color: var(--muted); font-size: 12px; padding: 24px; border-top: 1px solid var(--border); }
+    .hidden { display: none; }
+    input[type=date] { height: 44px; border-radius: 8px; border: 1px solid var(--border); background: var(--surface); padding: 0 10px; font: inherit; }
+  </style>
+</head>
+<body>
+  <header>
+    <div class="wrap">
+      <p class="kicker">Morning brief · Productivity Game × Dimensional Braid Engine</p>
+      <h1>Braid Brief</h1>
+      <p class="thesis" id="thesis">Loading today’s edition…</p>
+      <div class="date-row">
+        <button class="ghost" id="prev" type="button">Previous</button>
+        <strong id="when"></strong>
+        <button class="ghost" id="next" type="button">Next</button>
+        <input type="date" id="picker" />
+      </div>
+      <nav class="tabs" aria-label="Brief sections">
+        <button class="tab on" data-tab="pages" type="button">Four pages</button>
+        <button class="tab" data-tab="sim" type="button">Life simulator</button>
+        <button class="tab" data-tab="frontier" type="button">DBE frontier</button>
+      </nav>
+    </div>
+  </header>
+  <main class="wrap">
+    <section id="panel-pages"></section>
+    <section id="panel-sim" class="hidden"></section>
+    <section id="panel-frontier" class="hidden"></section>
+  </main>
+  <footer>Deterministic daily edition. Facsimiles are restatements, not scans. DBE is a research thesis.</footer>
+  <script>
+    const $ = (id) => document.getElementById(id);
+    const params = new URLSearchParams(location.search);
+    let date = params.get("date") || new Date().toISOString().slice(0, 10);
+    let tab = params.get("tab") || "pages";
+    let brief = null;
+    let sim = { index: 0, kbi: {}, finished: false, won: false };
+
+    const DOMAINS = [
+      ["career", "A last-minute project lands at 4:40pm. Helpful now, lethal to tomorrow's deep block."],
+      ["health", "You slept poorly. The plan was 75 minutes. The couch is arguing."],
+      ["money", "A hot tip in the group chat: go heavy, use leverage."],
+      ["people", "A teammate missed two deadlines. You have a story about their character ready."],
+      ["craft", "Two hours. Reread until fluent, or struggle to recall."],
+      ["lead", "Everyone said yes. The roadmap now has eleven top priorities."],
+    ];
+
+    function setUrl() {
+      const next = new URL(location.href);
+      next.searchParams.set("date", date);
+      next.searchParams.set("tab", tab);
+      history.replaceState({}, "", next);
+    }
+
+    async function load() {
+      const res = await fetch("/api/brief?date=" + date);
+      if (!res.ok) throw new Error("brief");
+      brief = await res.json();
+      date = brief.date;
+      $("thesis").textContent = brief.thesis;
+      $("when").textContent = new Date(date + "T00:00:00Z").toLocaleDateString("en-US", { weekday: "long", month: "long", day: "numeric", year: "numeric", timeZone: "UTC" });
+      $("picker").value = date;
+      $("picker").max = new Date().toISOString().slice(0, 10);
+      renderPages();
+      resetSim();
+      renderFrontier();
+      showTab(tab);
+      setUrl();
+    }
+
+    function renderPages() {
+      $("panel-pages").innerHTML = brief.books.map((b, i) => `
+        <article>
+          <p class="meta">Page ${b.page} · ${String(i + 1).padStart(2, "0")}</p>
+          <h2>${b.title}</h2>
+          <p style="color:var(--muted)">${b.author}</p>
+          <blockquote>${b.quote}</blockquote>
+          <p>${b.insight}</p>
+          <ul class="rules">${b.rules.map((r) => `<li><strong>${r.name}.</strong> ${r.principle}</li>`).join("")}</ul>
+          <p class="meta">KBI · ${b.kbi.label}</p>
+          <p class="meta" style="margin-top:12px">Original 1-pager facsimile</p>
+          ${b.blocks.map((x) => `<p><strong>${x.label}.</strong> ${x.text}</p>`).join("")}
+          <p class="meta" style="margin-top:12px">Further reading</p>
+          ${b.further.map((f) => `<div><a href="${f.url}" target="_blank" rel="noreferrer">${f.title}</a> · ${f.source}</div>`).join("")}
+        </article>
+      `).join("");
+    }
+
+    function resetSim() {
+      sim = { index: 0, kbi: Object.fromEntries(brief.books.map((b) => [b.id, 0])), finished: false, won: false };
+      renderSim();
+    }
+
+    function renderSim() {
+      const host = $("panel-sim");
+      if (sim.finished) {
+        const won = Object.values(sim.kbi).some((v) => v >= 80) || (Object.values(sim.kbi).some((v) => v >= 60) && Object.values(sim.kbi).reduce((a, b) => a + b, 0) >= 80);
+        host.innerHTML = `<article><h2>${won ? "KBI cleared" : "Incomplete braid"}</h2>
+          <p>Mastering a single page — picking its move four or more times — is enough to win. Drift scores nothing.</p>
+          <ul class="rules">${brief.books.map((b) => `<li>${b.kbi.label}: <strong>${sim.kbi[b.id]}</strong> · ${b.title}</li>`).join("")}</ul>
+          <button type="button" id="replay">Play this edition again</button></article>`;
+        $("replay").onclick = resetSim;
+        return;
+      }
+      const [domain, setup] = DOMAINS[sim.index];
+      const trap = brief.books[sim.index % 4].trap;
+      const choices = brief.books.map((b) => ({
+        id: b.id,
+        text: b.plays[domain].action,
+        why: b.plays[domain].why,
+        title: b.title,
+      })).concat([{ id: null, text: trap, why: "None of today's pages endorse this.", title: "Drift" }]);
+      for (let i = choices.length - 1; i > 0; i--) {
+        const j = Math.floor(Math.random() * (i + 1));
+        [choices[i], choices[j]] = [choices[j], choices[i]];
+      }
+      host.innerHTML = `<article>
+        <p class="meta">Scene ${sim.index + 1} / 6 · ${domain}</p>
+        <h2>${setup}</h2>
+        <p>Each answer can follow any of today's four pages. One correctly applied page can still carry the day.</p>
+        <div id="choices">${choices.map((c, i) => `<button class="choice" data-i="${i}" type="button">${c.text}</button>`).join("")}</div>
+        <ul class="rules">${brief.books.map((b) => `<li>${b.kbi.label}: ${sim.kbi[b.id]}</li>`).join("")}</ul>
+      </article>`;
+      host.querySelectorAll(".choice").forEach((btn) => {
+        btn.onclick = () => {
+          const c = choices[Number(btn.dataset.i)];
+          if (c.id) sim.kbi[c.id] = Math.min(100, (sim.kbi[c.id] || 0) + 20);
+          sim.index += 1;
+          if (sim.index >= 6) sim.finished = true;
+          renderSim();
+        };
+      });
+    }
+
+    function renderFrontier() {
+      const stance = { support: "Supports DBE", challenge: "Challenges DBE", qualify: "Qualifies DBE" };
+      $("panel-frontier").innerHTML = `
+        <h2>Scholarly record</h2>
+        ${brief.scholar.map((p) => `<article>
+          <div style="display:flex;justify-content:space-between;gap:8px;flex-wrap:wrap">
+            <p class="meta">${p.year} · ${p.venue}</p>
+            <span class="chip ${p.stance}">${stance[p.stance]}</span>
+          </div>
+          <h3>${p.title}</h3>
+          <p style="color:var(--muted)">${p.authors}</p>
+          <p>${p.abstract}</p>
+          <p><strong>Why it is here.</strong> ${p.dbeLink}</p>
+          <a href="${p.url}" target="_blank" rel="noreferrer">Open source</a>
+        </article>`).join("")}
+        <h2>Communities, industry, schools, code</h2>
+        <div class="grid two">${brief.communities.map((c) => `<div class="card"><p class="meta">${c.kind}</p><a href="${c.url}" target="_blank" rel="noreferrer">${c.name}</a><p>${c.blurb}</p></div>`).join("")}</div>
+        <h2>Lectures, courses, products</h2>
+        ${brief.learning.map((l) => `<article><p class="meta">${l.kind} · ${l.outlet}</p><a href="${l.url}" target="_blank" rel="noreferrer">${l.title}</a><p>${l.blurb}</p></article>`).join("")}
+      `;
+    }
+
+    function showTab(next) {
+      tab = next;
+      document.querySelectorAll(".tab").forEach((el) => el.classList.toggle("on", el.dataset.tab === tab));
+      $("panel-pages").classList.toggle("hidden", tab !== "pages");
+      $("panel-sim").classList.toggle("hidden", tab !== "sim");
+      $("panel-frontier").classList.toggle("hidden", tab !== "frontier");
+      setUrl();
+    }
+
+    function shift(days) {
+      const d = new Date(date + "T00:00:00Z");
+      d.setUTCDate(d.getUTCDate() + days);
+      const next = d.toISOString().slice(0, 10);
+      const cap = new Date().toISOString().slice(0, 10);
+      date = next > cap ? cap : next;
+      load().catch(() => { $("thesis").textContent = "Could not load this edition. Deploy the Worker so /api/brief is live."; });
+    }
+
+    document.querySelectorAll(".tab").forEach((el) => el.onclick = () => showTab(el.dataset.tab));
+    $("prev").onclick = () => shift(-1);
+    $("next").onclick = () => shift(1);
+    $("picker").onchange = () => { date = $("picker").value; load(); };
+    load().catch(() => { $("thesis").textContent = "Deploy with wrangler so /api/brief can seed today's four pages."; });
+  </script>
+</body>
+</html>
